@@ -1,6 +1,10 @@
 import express from 'express';
 import mongoose from "mongoose";
 import PostModel from './models/post.js';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import mongodb from "mongodb";
+const MongoClient = mongodb.MongoClient;
 
 const port = 4000;
 const app = express();
@@ -11,7 +15,7 @@ mongoose.connect("mongodb://localhost/express-login", (err)=> {
     if(err){
         console.log(err);
     }else{
-        console.log("Database is connected");
+        console.log("Database is connected by mongoose");
     }
 })
 
@@ -62,6 +66,7 @@ app.get('/api/post/batch/:page', async (req, res)=> {
     }
 })
 
+//post key
 app.post('/api/post/:key', async (req, res)=> {
     try{
         if(req.params.key != "123"){
@@ -76,3 +81,21 @@ app.post('/api/post/:key', async (req, res)=> {
         res.json(err.message)
     }
 })
+
+//mongoDB Atlas
+const DB_NAME = `express-login`;
+const USER_NAME = `MariDevelop`;
+const USER_PASSWD = `Usako123!`;
+const HOST_NAME = `cluster0.dpi5u.mongodb.net`; 
+
+const url = `mongodb+srv://${USER_NAME}:${USER_PASSWD}@${HOST_NAME}/${DB_NAME}?retryWrites=true&w=majority`;
+const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  console.log("Connected with mongoDB ATLAS!!");
+  client.close();
+});
+
+app.use(express.json());
+app.use(cookieParser());
