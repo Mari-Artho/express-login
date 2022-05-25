@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from "mongoose";
 import PostModel from './models/post.js';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+//import logger from 'morgan';
 import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient;
 import cors from 'cors';
@@ -51,21 +51,27 @@ app.get("/api/post/:id", async (req, res)=>{
     }
 })
 
-//post key(ここに書いたものがrestからデータベースに送れる？)
-app.post('/api/post/:key', async (req, res)=> {
-    try{
-        if(req.params.key != "123"){
-            return res.status(401).json("This message is from server.js(backen)")
-        }
-        const newPost = new PostModel(req.body)
-        console.log(newPost)
-        newPost.save()
-        res.json("New post is saved!")
-    } catch(err){
-        console.log(err)
-        res.json(err.message)
-    }
+//post
+app.post('/api/post', async (req, res)=> {
+    const posts = await PostModel.create(req.body)
+    res.status(201).json(posts)
 })
+
+// //post key(ここに書いたものがrestからデータベースに送れる？)
+// app.post('/api/post/:key', async (req, res)=> {
+//     try{
+//         if(req.params.key != "123"){
+//             return res.status(401).json("This message is from server.js(backen)")
+//         }
+//         const newPost = new PostModel(req.body)
+//         console.log(newPost)
+//         newPost.save()
+//         res.json("New post is saved!")
+//     } catch(err){
+//         console.log(err)
+//         res.json(err.message)
+//     }
+// })
 
 // //mongoDB Atlas
 // const DB_NAME = `express-login`;

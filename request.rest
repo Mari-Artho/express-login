@@ -9,5 +9,4 @@ Content-Type: application/json
     "email": "mari@mail.com", 
     "password": "123abc",
     "subscribe": false
-
 }
