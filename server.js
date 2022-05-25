@@ -10,7 +10,10 @@ const port = 4000;
 const app = express();
 
 app.use(express.json())
+app.use(express.json());
+app.use(cookieParser());
 
+//参考リポ： mongodb-cloud-food
 mongoose.connect("mongodb://localhost/express-login", (err)=> {
     if(err){
         console.log(err);
@@ -82,20 +85,19 @@ app.post('/api/post/:key', async (req, res)=> {
     }
 })
 
-//mongoDB Atlas
-const DB_NAME = `express-login`;
-const USER_NAME = `MariDevelop`;
-const USER_PASSWD = `Usako123!`;
-const HOST_NAME = `cluster0.dpi5u.mongodb.net`; 
+// //mongoDB Atlas
+// const DB_NAME = `express-login`;
+// const USER_NAME = `MariDevelop`;
+// const USER_PASSWD = `fixlater`;
+// const HOST_NAME = `cluster0.dpi5u.mongodb.net`; 
 
-const url = `mongodb+srv://${USER_NAME}:${USER_PASSWD}@${HOST_NAME}/${DB_NAME}?retryWrites=true&w=majority`;
-const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  console.log("Connected with mongoDB ATLAS!!");
-  client.close();
-});
+// const url = `mongodb+srv://${USER_NAME}:${USER_PASSWD}@${HOST_NAME}/${DB_NAME}?retryWrites=true&w=majority`;
+// const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
+// client.connect(err => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   console.log("Connected with mongoDB ATLAS!!");
+//   client.close();
+// });
 
-app.use(express.json());
-app.use(cookieParser());
+
