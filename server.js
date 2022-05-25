@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient;
+import cors from 'cors';
 
 const port = 4000;
 const app = express();
@@ -12,6 +13,7 @@ const app = express();
 app.use(express.json())
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 //参考リポ： mongodb-cloud-food
 mongoose.connect("mongodb://localhost/express-login", (err)=> {
@@ -49,31 +51,11 @@ app.get("/api/post/:id", async (req, res)=>{
     }
 })
 
-//Get by page
-app.get('/api/post/batch/:page', async (req, res)=> {
-    const limit = 5
-    try{
-        const posts = await PostModel.find().limit(limit).skip((req.params.page -1) * limit).exec()
-
-        const count = await PostModel.countDocuments()
-
-        res.json({
-            posts,
-            numOfResults: posts.length,
-            currentPage: Number(req.params.page),
-            totalPages: Math.ceil(count/limit)
-        })
-    } catch(err){
-        console.log(err)
-        res.json(err.message)
-    }
-})
-
-//post key
+//post key(ここに書いたものがrestからデータベースに送れる？)
 app.post('/api/post/:key', async (req, res)=> {
     try{
         if(req.params.key != "123"){
-            return res.status(401).json("No need")
+            return res.status(401).json("This message is from server.js(backen)")
         }
         const newPost = new PostModel(req.body)
         console.log(newPost)
@@ -99,5 +81,36 @@ app.post('/api/post/:key', async (req, res)=> {
 //   console.log("Connected with mongoDB ATLAS!!");
 //   client.close();
 // });
+
+//参考リポ： vs code: monolit-users, repo: users-front, users-backend
+let users = [
+    {
+        "email": "mari@mail",
+        "password": "abc123",
+        "subscribe": false
+    },
+    {
+        "email": "takeshi@mail",
+        "password": "abc456",
+        "subscribe": true
+    }
+]
+
+/* GET users listing. */
+app.get('/', function(req, res, next) {
+    res.json(users);
+  });
+  
+  app.post('/', (req, res)=> {
+    let user = {
+      email: req.body.email,
+      password: req.body.password,
+      subscribe: req.body.subscribe
+    };
+    users.push(user);
+    res.json("success");
+    //下のメッセージをフロントのscript.jsへ送る。パスワードなど送りたくない場合に、選択したもの、ここではIDだけを送ったりできる。
+    res.json({"message":"success",  "email": user.email});
+  })
 
 

@@ -4,4 +4,6 @@
 
 #npm version 8.10.0
 
+#npm i cors
+
 #express, mongoose
