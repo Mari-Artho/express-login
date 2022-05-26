@@ -1,12 +1,22 @@
-GET http://localhost:4000/api/post
+GET http://localhost:4000/users
 
 ###
 
-POST http://localhost:4000/api/post/123 
+POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-    "email": "mari@mail.com", 
-    "password": "123abc",
-    "subscribe": false
+    "email": "sato", 
+    "password": "123"
 }
+
+###
+//login
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+    "email": "sato", 
+    "password": "123" 
+}
+

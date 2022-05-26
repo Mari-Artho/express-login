@@ -11,7 +11,6 @@ const port = 4000;
 const app = express();
 
 app.use(express.json())
-app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
@@ -30,7 +29,7 @@ app.listen(port, ()=> {
 })
 
 //GET
-app.get("/api/post", async (req, res)=> {
+app.get("/users", async (req, res)=> {
     try{
         const posts = await PostModel.find()
         res.json(posts)
@@ -41,7 +40,7 @@ app.get("/api/post", async (req, res)=> {
 })
 
 //Get by id
-app.get("/api/post/:id", async (req, res)=>{
+app.get("/login/:id", async (req, res)=>{
     try{
         const post = await PostModel.findById(req.params.id)
         res.json(post)
@@ -52,9 +51,31 @@ app.get("/api/post/:id", async (req, res)=>{
 })
 
 //post
-app.post('/api/post', async (req, res)=> {
+app.post('/signup', async (req, res)=> {
     const posts = await PostModel.create(req.body)
     res.status(201).json(posts)
+})
+
+async function findUser(email, password)
+{
+    let foundUser = await PostModel.findOne({ "email": email, "password" : password});
+console.log(foundUser);
+    return (foundUser != null);
+}
+//log in
+//2
+app.post("/login", (req, res)=> {
+    let foundUser = findUser(req.body.email, req.body.password)
+    foundUser.then(result => { 
+        console.log(result);
+        if(result){
+            res.json("loginSuccess");
+            return //res.send("You are now logged in!!")
+        }
+    
+        res.json("loginFailed")
+    }
+    )
 })
 
 // //post key(ここに書いたものがrestからデータベースに送れる？)
@@ -89,25 +110,15 @@ app.post('/api/post', async (req, res)=> {
 // });
 
 //参考リポ： vs code: monolit-users, repo: users-front, users-backend
-let users = [
-    {
-        "email": "mari@mail",
-        "password": "abc123",
-        "subscribe": false
-    },
-    {
-        "email": "takeshi@mail",
-        "password": "abc456",
-        "subscribe": true
-    }
-]
+//下の usersではこのファイルのログインでも使うので消さないで！
+let users = []
 
 /* GET users list. */
 app.get('/', function(req, res, next) {
     res.json(users);
   });
   
-  app.post('/', (req, res)=> {
+app.post('/', (req, res)=> {
     let user = {
       email: req.body.email,
       password: req.body.password,
