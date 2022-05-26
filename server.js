@@ -102,7 +102,7 @@ let users = [
     }
 ]
 
-/* GET users listing. */
+/* GET users list. */
 app.get('/', function(req, res, next) {
     res.json(users);
   });
