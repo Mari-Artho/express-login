@@ -56,10 +56,11 @@ app.post('/signup', async (req, res)=> {
     res.status(201).json(posts)
 })
 
+/* check if user with matching email/password exists in Mongo database */
 async function findUser(email, password)
 {
     let foundUser = await PostModel.findOne({ "email": email, "password" : password});
-    return foundUser;
+    return foundUser; // null if not found
 }
 //log in
 //2
@@ -67,9 +68,10 @@ app.post("/login", (req, res)=> {
     let foundUser = findUser(req.body.email, req.body.password)
     foundUser.then(result => { 
         if (result != null) {
-            res.send(result);
+            res.send(result); // return user data
         } else {
             res.send({"email" : "", "password": ""})
+            // return a JSON-formatted record with empty user data
         }
     }
     )
