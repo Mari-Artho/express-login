@@ -59,21 +59,18 @@ app.post('/signup', async (req, res)=> {
 async function findUser(email, password)
 {
     let foundUser = await PostModel.findOne({ "email": email, "password" : password});
-console.log(foundUser);
-    return (foundUser != null);
+    return foundUser;
 }
 //log in
 //2
 app.post("/login", (req, res)=> {
     let foundUser = findUser(req.body.email, req.body.password)
     foundUser.then(result => { 
-        console.log(result);
-        if(result){
-            res.json("loginSuccess");
-            return //res.send("You are now logged in!!")
+        if (result != null) {
+            res.send(result);
+        } else {
+            res.send({"email" : "", "password": ""})
         }
-    
-        res.json("loginFailed")
     }
     )
 })
