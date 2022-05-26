@@ -19,4 +19,5 @@ const schema = new mongoose.Schema({
     }
 )
 
+//"users" is a file name in the mongoDB
 export default mongoose.model("users", schema)
