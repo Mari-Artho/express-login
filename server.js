@@ -40,6 +40,17 @@ app.get("/users", async (req, res)=> {
     }
 })
 
+//Admin
+app.get("/admin", async (req, res)=> {
+    try{
+        const posts = await PostModel.find()
+        res.json(posts)
+    } catch(err){
+        console.log(err)
+        res.json(err.message)
+    }
+})
+
 //Get by id
 app.get("/login/:id", async (req, res)=>{
     try{
@@ -56,9 +67,9 @@ app.post('/signup', async (req, res)=> {
     try {
       const posts = await PostModel.create(req.body)
       res.status(201).json(posts)
-    } catch (err) {
+    } catch (err) { // on empty email/password, show error on console
         console.log(err)
-        res.json(err.message)
+        res.status(400).json(err.message)
     }
 })
 
