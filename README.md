@@ -12,3 +12,4 @@ There is a front-end with a login page where users can log in, subscribe, and un
 #npm i mongodb
 #npm i mongoose
 #npm i cors
+#npm i dotenv --save

@@ -7,6 +7,8 @@ import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient;
 import cors from 'cors';
 import { application } from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const port = 4000;
 const app = express();
@@ -15,8 +17,12 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(cors());
 
+// //mongoDB Atlas
+
+const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@${process.env.HOST_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 //参考リポ： mongodb-cloud-food
-mongoose.connect("mongodb://localhost/express-login", (err)=> {
+//mongoose.connect("mongodb://localhost/express-login", (err)=> {
+    mongoose.connect(url, (err)=> {
     if(err){
         console.log(err);
     }else{
@@ -125,20 +131,14 @@ app.get('/admin', (req, res)=> {
 //     }
 // })
 
-// //mongoDB Atlas
-// const DB_NAME = `express-login`;
-// const USER_NAME = `MariDevelop`;
-// const USER_PASSWD = `fixlater`;
-// const HOST_NAME = `cluster0.dpi5u.mongodb.net`; 
 
-// const url = `mongodb+srv://${USER_NAME}:${USER_PASSWD}@${HOST_NAME}/${DB_NAME}?retryWrites=true&w=majority`;
-// const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   console.log("Connected with mongoDB ATLAS!!");
-//   client.close();
-// });
+const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
+client.connect(err => {
+  const collection = client.db("express-login").collection("userlist");
+  // perform actions on the collection object
+  console.log("Connected with mongoDB アトラス!!");
+  //client.close();
+});
 
 //参考リポ： vs code: monolit-users, repo: users-front, users-backend
 //下の usersではこのファイルのログインでも使うので消さないで！
