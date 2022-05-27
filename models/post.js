@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
     },
     subscribe: {
         type: Boolean,
-        required: false
+        required: true
     }
     },
     {

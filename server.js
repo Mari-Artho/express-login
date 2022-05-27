@@ -53,8 +53,13 @@ app.get("/login/:id", async (req, res)=>{
 
 //post
 app.post('/signup', async (req, res)=> {
-    const posts = await PostModel.create(req.body)
-    res.status(201).json(posts)
+    try {
+      const posts = await PostModel.create(req.body)
+      res.status(201).json(posts)
+    } catch (err) {
+        console.log(err)
+        res.json(err.message)
+    }
 })
 
 //subscribe, put is update.
@@ -86,6 +91,11 @@ app.post("/login", (req, res)=> {
         }
     }
     )
+})
+
+//admin
+app.get('/admin', (req, res)=> {
+
 })
 
 // //post key(ここに書いたものがrestからデータベースに送れる？)
