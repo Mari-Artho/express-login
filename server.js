@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient;
 import cors from 'cors';
+import { application } from 'express';
 
 const port = 4000;
 const app = express();
@@ -56,12 +57,22 @@ app.post('/signup', async (req, res)=> {
     res.status(201).json(posts)
 })
 
+//subscribe, put is update.
+app.put('/subscribe', async(req, res)=> {
+    await updateSubscribeStatus(req.body)
+    res.status(201).json("Subscription status updated")
+ })
+
+async function updateSubscribeStatus(body){
+    await PostModel.findOneAndUpdate({ "email": body.email, "password" : body.password}, { subscribe: body.subscribe });
+}
+
 /* check if user with matching email/password exists in Mongo database */
-async function findUser(email, password)
-{
+async function findUser(email, password){
     let foundUser = await PostModel.findOne({ "email": email, "password" : password});
     return foundUser; // null if not found
 }
+
 //log in
 //2
 app.post("/login", (req, res)=> {
