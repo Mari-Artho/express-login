@@ -147,29 +147,33 @@ app.get("/users", async (req, res)=> {
 })
 
 function showUsers(data, res) {
-    let html = '<html><body><h1>All users</h1>'
-    html += '<ul>';
-    //Show all users
-    data.forEach(user => {
-        html += '<li>';
-        html += `name/email:  ${user.email},  password: ${user.password},  ${user.subscribe ? 'Subscribed': 'Not subscribed'}<br>`;
-        html += '</li>'
-    })
-    html += '</ul>'
-    
-    //Show email + subsucribers
-    html += '<h1>Subscribed users</h1>'
-    html += '<ul>'
-    data.forEach(user => {
-        if(user.subscribe){
-            html += '<li>'
-            html += ` ${user.email}`
+    if (login) {
+        let html = '<html><body><h1>All users</h1>'
+        html += '<ol>';
+        //Show all users
+        data.forEach(user => {
+            html += '<li>';
+            html += `name/email:  ${user.email},  password: ${user.password},  ${user.subscribe ? 'Subscribed': 'Not subscribed'}<br>`;
             html += '</li>'
-        }
-    })
-    html += '</ul>'
-    html += '</body></html>'
-    res.send(html)
+        })
+        html += '</ol>'
+        
+        //Show email + subsucribers
+        html += '<h1>Subscribed users</h1>'
+        html += '<ol>'
+        data.forEach(user => {
+            if(user.subscribe){
+                html += '<li>'
+                html += ` ${user.email}`
+                html += '</li>'
+            }
+        })
+        html += '</ol>'
+        html += '</body></html>'
+        res.send(html)
+    } else {
+        res.send('<html><body><h1>Please log in</h1></body></html>')
+    }
 }
 
 //Admin show
