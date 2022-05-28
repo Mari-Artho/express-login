@@ -15,6 +15,7 @@ import CryptoJs from 'crypto-js';
 
 const port = 5000;
 const app = express();
+const SALT = "taketon"
 
 app.use(express.json())
 app.use(cookieParser());
@@ -35,25 +36,16 @@ const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@$
     }
 })
 
-//
+//port
 app.listen(port, ()=> {
     console.log(`Application is running on port ${port}`)
 })
 
-//Get by id これいる？
-// app.get("/login/:id", async (req, res)=>{
-//     try{
-//         const post = await PostModel.findById(req.params.id)
-//         res.json(post)
-//     } catch(err){
-//         console.log(err)
-//         res.json(err.message)
-//     }
-// })
-
 //post
 app.post('/signup', async (req, res)=> {
     try {
+        var cryptoPassword = CryptoJs.SHA512(SALT + req.body.password).toString();
+        req.body.password = cryptoPassword
       const posts = await PostModel.create(req.body)
       res.status(201).json(posts)
     } catch (err) { // on empty email/password, show error on console
@@ -99,8 +91,9 @@ async function findUser(email, password){
 }
 
 //log in
-//2
 app.post("/login", (req, res)=> {
+    var cryptoPassword = CryptoJs.SHA512(SALT + req.body.password).toString();
+    req.body.password = cryptoPassword
     let foundUser = findUser(req.body.email, req.body.password)
     foundUser.then(result => { 
         if (result != null) {
@@ -121,28 +114,6 @@ client.connect(err => {
   console.log("Connected with mongoDB Atlas!!");
   //client.close();
 });
-
-// /* GET users list. これいる？*/
-// app.get('/', function(req, res, next) {
-//     res.json(users);
-//   });
-  
-//cryptoで暗号化してパスワードを送る
-//passwordを暗号化
-    app.post('/', (req, res)=> {
-        let user = {
-        email: req.body.email,
-        password: req.body.password,
-        subscribe: req.body.subscribe
-        };
-
-        var cryptoPassword = CryptoJs.AES.encrypt(password, "Salt Nyckel").toString();
-        console.log(cryptoPassword);
-    users.push(user);
-    res.json("success");
-    //下のメッセージをフロントのscript.jsへ送る。パスワードなど送りたくない場合に、選択したもの、ここではIDだけを送ったりできる。
-    res.json({"message":"success",  "email": user.email});
-  })
 
 //Admin
 app.post("/admin", (req, res)=> {
