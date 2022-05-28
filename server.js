@@ -40,18 +40,6 @@ app.listen(port, ()=> {
     console.log(`Application is running on port ${port}`)
 })
 
-//GET
-app.get("/users", async (req, res)=> {
-    try{
-        const posts = await PostModel.find()
-        res.json(posts)
-    } catch(err){
-        console.log(err)
-        res.json(err.message)
-    }
-})
-
-
 //Get by id これいる？
 // app.get("/login/:id", async (req, res)=>{
 //     try{
@@ -138,18 +126,54 @@ client.connect(err => {
 
 //Admin
 app.post("/admin", (req, res)=> {
-    console.log(req.body)
     if (req.body.email == "admin" && req.body.password == "admin") {
         login = true;
-        res.redirect("/admin/setting");
+        res.redirect("/users");
     }
     else {
         res.send("Wrong email or password, please try again");
     }
 })
 
+// list of users
+app.get("/users", async (req, res)=> {
+    try{
+        const users = await PostModel.find()
+        showUsers(users, res)
+    } catch(err){
+        console.log(err)
+        res.json(err.message)
+    }
+})
+
+function showUsers(data, res) {
+    let html = '<html><body><h1>All users</h1>'
+    html += '<ul>';
+    //Show all users
+    data.forEach(user => {
+        html += '<li>';
+        html += `name/email:  ${user.email},  password: ${user.password},  ${user.subscribe ? 'Subscribed': 'Not subscribed'}<br>`;
+        html += '</li>'
+    })
+    html += '</ul>'
+    
+    //Show email + subsucribers
+    html += '<h1>Subscribed users</h1>'
+    html += '<ul>'
+    data.forEach(user => {
+        if(user.subscribe){
+            html += '<li>'
+            html += ` ${user.email}`
+            html += '</li>'
+        }
+    })
+    html += '</ul>'
+    html += '</body></html>'
+    res.send(html)
+}
+
 //Admin show
-app.get("/adminlogin",  (req, res)=> {
+app.get("/",  (req, res)=> {
     let adminForm = `<form action="admin" method="post">
     <h1>Admin page</h1>
     <section>
