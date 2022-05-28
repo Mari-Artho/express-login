@@ -9,18 +9,21 @@ import cors from 'cors';
 import { application } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
+import CryptoJs from 'crypto-js';
 
-const port = 4000;
+//app.use(express.static("server.js"))
+
+const port = 5000;
 const app = express();
 
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors());
 
-// //mongoDB Atlas
+let users = []
 
-const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@${process.env.HOST_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-//参考リポ： mongodb-cloud-food
+//mongoDB Atlas
+const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@${process.env.HOST_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`
 //mongoose.connect("mongodb://localhost/express-login", (err)=> {
     mongoose.connect(url, (err)=> {
     if(err){
@@ -46,27 +49,17 @@ app.get("/users", async (req, res)=> {
     }
 })
 
-//Admin
-app.get("/admin", async (req, res)=> {
-    try{
-        const posts = await PostModel.find()
-        res.json(posts)
-    } catch(err){
-        console.log(err)
-        res.json(err.message)
-    }
-})
 
-//Get by id
-app.get("/login/:id", async (req, res)=>{
-    try{
-        const post = await PostModel.findById(req.params.id)
-        res.json(post)
-    } catch(err){
-        console.log(err)
-        res.json(err.message)
-    }
-})
+//Get by id これいる？
+// app.get("/login/:id", async (req, res)=>{
+//     try{
+//         const post = await PostModel.findById(req.params.id)
+//         res.json(post)
+//     } catch(err){
+//         console.log(err)
+//         res.json(err.message)
+//     }
+// })
 
 //post
 app.post('/signup', async (req, res)=> {
@@ -110,55 +103,58 @@ app.post("/login", (req, res)=> {
     )
 })
 
-//admin
-app.get('/admin', (req, res)=> {
-
-})
-
-// //post key(ここに書いたものがrestからデータベースに送れる？)
-// app.post('/api/post/:key', async (req, res)=> {
-//     try{
-//         if(req.params.key != "123"){
-//             return res.status(401).json("This message is from server.js(backen)")
-//         }
-//         const newPost = new PostModel(req.body)
-//         console.log(newPost)
-//         newPost.save()
-//         res.json("New post is saved!")
-//     } catch(err){
-//         console.log(err)
-//         res.json(err.message)
-//     }
-// })
-
-
+//connect to mongoDB Atlas
 const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
 client.connect(err => {
   const collection = client.db("express-login").collection("userlist");
   // perform actions on the collection object
-  console.log("Connected with mongoDB アトラス!!");
+  console.log("Connected with mongoDB Atlas!!");
   //client.close();
 });
 
-//参考リポ： vs code: monolit-users, repo: users-front, users-backend
-//下の usersではこのファイルのログインでも使うので消さないで！
-let users = []
-
-/* GET users list. */
-app.get('/', function(req, res, next) {
-    res.json(users);
-  });
+// /* GET users list. これいる？*/
+// app.get('/', function(req, res, next) {
+//     res.json(users);
+//   });
   
-app.post('/', (req, res)=> {
-    let user = {
-      email: req.body.email,
-      password: req.body.password,
-      subscribe: req.body.subscribe
-    };
+//cryptoで暗号化してパスワードを送る
+//passwordを暗号化
+    app.post('/', (req, res)=> {
+        let user = {
+        email: req.body.email,
+        password: req.body.password,
+        subscribe: req.body.subscribe
+        };
+
+        var cryptoPassword = CryptoJs.AES.encrypt(password, "Salt Nyckel").toString();
+        console.log(cryptoPassword);
     users.push(user);
     res.json("success");
     //下のメッセージをフロントのscript.jsへ送る。パスワードなど送りたくない場合に、選択したもの、ここではIDだけを送ったりできる。
     res.json({"message":"success",  "email": user.email});
   })
+
+// //Admin
+app.get("/admin", (req, res)=> {
+    let adminmessage = `<h1>Admin page</h1>`
+
+    res.send(adminmessage)
+})
+
+
+//Admin show
+app.get("/adminform",  (req, res)=> {
+    let adminForm = `<form action="admin" method="get">
+    <h1>Admin page</h1>
+    <section>
+    <input type="text" id="signupEmail" placeholder="email/username">
+    <input type="password" id="signupPassword" placeholder="password">
+    <input type="submit" id="signupBtn" value="Log in">
+    </section>
+    </form>
+    `
+    res.send(adminForm)
+})
+
 
 
