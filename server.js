@@ -72,6 +72,26 @@ async function updateSubscribeStatus(body){
     await PostModel.findOneAndUpdate({ "email": body.email, "password" : body.password}, { subscribe: body.subscribe });
 }
 
+/* check if user with matching ID exists in Mongo database */
+async function findUserByID(id){
+    let foundUser = await PostModel.findOne({ "_id": id });
+    return foundUser; // null if not found
+}
+
+//restore login session
+app.post("/restore", (req, res)=> {
+    let foundUser = findUserByID(req.body.id)
+    foundUser.then(result => {
+        if (result != null) {
+            res.send(result); // return user data
+        } else {
+            res.send({"email" : "", "password": ""})
+            // return a JSON-formatted record with empty user data
+        }
+    }
+    )
+})
+
 /* check if user with matching email/password exists in Mongo database */
 async function findUser(email, password){
     let foundUser = await PostModel.findOne({ "email": email, "password" : password});
