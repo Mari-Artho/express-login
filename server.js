@@ -18,9 +18,11 @@ const app = express();
 
 app.use(express.json())
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 let users = []
+let login = false
 
 //mongoDB Atlas
 const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@${process.env.HOST_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`
@@ -134,21 +136,25 @@ client.connect(err => {
     res.json({"message":"success",  "email": user.email});
   })
 
-// //Admin
-app.get("/admin", (req, res)=> {
-    let adminmessage = `<h1>Admin page</h1>`
-
-    res.send(adminmessage)
+//Admin
+app.post("/admin", (req, res)=> {
+    console.log(req.body)
+    if (req.body.email == "admin" && req.body.password == "admin") {
+        login = true;
+        res.redirect("/admin/setting");
+    }
+    else {
+        res.send("Wrong email or password, please try again");
+    }
 })
 
-
 //Admin show
-app.get("/adminform",  (req, res)=> {
-    let adminForm = `<form action="admin" method="get">
+app.get("/adminlogin",  (req, res)=> {
+    let adminForm = `<form action="admin" method="post">
     <h1>Admin page</h1>
     <section>
-    <input type="text" id="signupEmail" placeholder="email/username">
-    <input type="password" id="signupPassword" placeholder="password">
+    <input type="text" name="email" id="signupEmail" placeholder="email/username">
+    <input type="password" name="password" id="signupPassword" placeholder="password">
     <input type="submit" id="signupBtn" value="Log in">
     </section>
     </form>
