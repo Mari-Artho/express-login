@@ -2,7 +2,7 @@ This is a simple example to handle subscriptions.
 
 There is a back-end with a login page where users can log in, subscribe, and unsubscribe. An admin page shows all registered accounts.
 
-#Front page => https://github.com/Mari-Artho/express-login-front
+* Front page => https://github.com/Mari-Artho/express-login-front
 
 To login to admin page.
  username/email: admin, password: admin
