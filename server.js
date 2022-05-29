@@ -13,7 +13,7 @@ import CryptoJs from 'crypto-js';
 
 //app.use(express.static("server.js"))
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
 const SALT = "taketon"
 
