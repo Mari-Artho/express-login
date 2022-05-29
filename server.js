@@ -2,7 +2,6 @@ import express from 'express';
 import mongoose from "mongoose";
 import PostModel from './models/post.js';
 import cookieParser from 'cookie-parser';
-//import logger from 'morgan';
 import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient;
 import cors from 'cors';
@@ -11,16 +10,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 import CryptoJs from 'crypto-js';
 
-//app.use(express.static("server.js"))
-
 const port = process.env.PORT || 5000;
 const app = express();
 const SALT = "taketon"
 
-app.use(express.json());
-//↓Method to recognize received data as JSON object
 app.use(cookieParser());
-//↓urlencoded = Method for recognizing input data as a character string or array
+//express.json　＝ to recognize received data as JSON object
+app.use(express.json());
+//urlencoded = Method for recognizing input data as a character string or array
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
@@ -49,8 +46,8 @@ app.post('/signup', async (req, res)=> {
     try {
         var cryptoPassword = CryptoJs.SHA512(SALT + req.body.password).toString();
         req.body.password = cryptoPassword
-      const posts = await PostModel.create(req.body)
-      res.status(201).json(posts)
+        const posts = await PostModel.create(req.body)
+        res.status(201).json(posts)
     } catch (err) { // on empty email/password, show error on console
         console.log(err)
         res.status(400).json(err.message)
@@ -83,8 +80,7 @@ app.post("/restore", (req, res)=> {
             res.send({"email" : "", "password": ""})
             // return a JSON-formatted record with empty user data
         }
-    }
-    )
+    })
 })
 
 /* check if user with matching email/password exists in Mongo database */
@@ -128,7 +124,7 @@ app.post("/admin", (req, res)=> {
     }
 })
 
-// list of users
+//list of users
 app.get("/users", async (req, res)=> {
     try{
         const users = await PostModel.find()
@@ -182,6 +178,3 @@ app.get("/",  (req, res)=> {
     `
     res.send(adminForm)
 })
-
-
-
