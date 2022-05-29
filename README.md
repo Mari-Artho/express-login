@@ -7,6 +7,8 @@ There is a back-end with a login page where users can log in, subscribe, and uns
 To login to admin page.
  username/email: admin, password: admin
 
+http://localhost:5000/
+
 Installation:
 
 ```

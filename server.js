@@ -114,7 +114,7 @@ client.connect(err => {
   const collection = client.db("express-login").collection("users");
   // perform actions on the collection object
   console.log("Connected with mongoDB Atlas!!");
-  //client.close();
+  client.close();
 });
 
 //Admin
