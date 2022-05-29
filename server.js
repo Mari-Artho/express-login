@@ -17,8 +17,10 @@ const port = 5000;
 const app = express();
 const SALT = "taketon"
 
-app.use(express.json())
+app.use(express.json());
+//↓Method to recognize received data as JSON object
 app.use(cookieParser());
+//↓urlencoded = Method for recognizing input data as a character string or array
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
@@ -27,6 +29,7 @@ let login = false
 
 //mongoDB Atlas
 const url = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASSWD}@${process.env.HOST_NAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`
+console.log(url)
 //mongoose.connect("mongodb://localhost/express-login", (err)=> {
     mongoose.connect(url, (err)=> {
     if(err){
@@ -102,14 +105,13 @@ app.post("/login", (req, res)=> {
             res.send({"email" : "", "password": ""})
             // return a JSON-formatted record with empty user data
         }
-    }
-    )
+    })
 })
 
 //connect to mongoDB Atlas
 const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
 client.connect(err => {
-  const collection = client.db("express-login").collection("userlist");
+  const collection = client.db("express-login").collection("users");
   // perform actions on the collection object
   console.log("Connected with mongoDB Atlas!!");
   //client.close();
@@ -144,7 +146,7 @@ function showUsers(data, res) {
         //Show all users
         data.forEach(user => {
             html += '<li>';
-            html += `name/email:  ${user.email},  password: ${user.password},  ${user.subscribe ? 'Subscribed': 'Not subscribed'}<br>`;
+            html += `name/email:  ${user.email}, <br>  password: ${user.password},  <br> ${user.subscribe ? 'Subscribed': 'Not subscribed'}<br>`;
             html += '</li>'
         })
         html += '</ol>'
