@@ -14,6 +14,7 @@ To login to admin page
 
 Installation:
 
+```sh
 npm version 8.10.0
 npm i express
 npm i mongodb
@@ -21,4 +22,4 @@ npm i mongoose
 npm i cors
 npm i dotenv --save
 npm i crypto-js
-
+```
